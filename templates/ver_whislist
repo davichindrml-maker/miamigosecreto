@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Wishlist de {{ amigo }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f6f6f6;
+            text-align: center;
+            margin-top: 80px;
+        }
+        .card {
+            background-color: white;
+            display: inline-block;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.15);
+        }
+        ul {
+            text-align: left;
+        }
+        a.btn {
+            background-color: #2196F3;
+            color: white;
+            padding: 8px 18px;
+            margin-top: 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Wishlist de {{ amigo | capitalize }}</h2>
+
+        {% if lista %}
+            <ul>
+                {% for item in lista %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Esta persona aún no ha registrado su wishlist.</p>
+        {% endif %}
+
+        <a href="{{ url_for('opciones') }}" class="btn">Volver a opciones</a>
+    </div>
+
+</body>
+</html>

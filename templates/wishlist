@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tu Wishlist</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f6f6f6;
+            text-align: center;
+            margin-top: 80px;
+        }
+        .card {
+            background-color: white;
+            display: inline-block;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.15);
+            width: 350px;
+        }
+        input[type="text"] {
+            width: 90%;
+            padding: 8px;
+            margin: 6px 0;
+            font-size: 14px;
+        }
+        button {
+            margin-top: 15px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        button:hover {
+            background-color: #43a047;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Hola {{ nombre | capitalize }} 👋</h2>
+        <p>Escribe 3 ideas de regalos que te gustaría recibir:</p>
+
+        <form method="POST">
+            <input type="text" name="item1" placeholder="Regalo 1" required><br>
+            <input type="text" name="item2" placeholder="Regalo 2" required><br>
+            <input type="text" name="item3" placeholder="Regalo 3" required><br>
+            <button type="submit">Guardar wishlist</button>
+        </form>
+    </div>
+
+</body>
+</html>

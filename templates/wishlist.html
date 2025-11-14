@@ -74,3 +74,24 @@
         .back {
             display: block;
             margin-top:
+</style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Hola {{ nombre | capitalize }} 👋</h2>
+        <p>Edita o escribe tus 3 deseos de regalo:</p>
+
+        <form method="POST">
+            <input type="text" name="item1" value="{{ lista[0] }}" placeholder="Regalo 1" required><br>
+            <input type="text" name="item2" value="{{ lista[1] }}" placeholder="Regalo 2" required><br>
+            <input type="text" name="item3" value="{{ lista[2] }}" placeholder="Regalo 3" required><br>
+            <button type="submit">Guardar</button>
+        </form>
+
+        <br>
+        <a href="{{ url_for('opciones') }}">Volver</a>
+    </div>
+
+</body>
+</html>

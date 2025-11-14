@@ -6,6 +6,9 @@ import os
 
 app = Flask(__name__)
 app.secret_key = "intercambio_ultra_secreto_2025"
+# Crear carpeta database si no existe
+if not os.path.exists("database"):
+    os.makedirs("database")
 
 # --------------------------
 # UTILIDADES PARA JSON
@@ -184,5 +187,6 @@ def logout():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
 
 

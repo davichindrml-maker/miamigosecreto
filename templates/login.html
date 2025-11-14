@@ -2,60 +2,80 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Intercambio de Regalos - Login</title>
+    <title>Intercambio de Regalos 🎄</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f6f6f6;
-            text-align: center;
-            margin-top: 100px;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),
+                        url('https://i.imgur.com/YJ5Yg1V.jpeg') center/cover no-repeat;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
+
         .card {
-            background-color: white;
-            display: inline-block;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.15);
+            background: rgba(255,255,255,0.9);
+            padding: 40px;
+            border-radius: 15px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(255,255,255,0.7);
+            animation: fadeIn 1.2s ease;
         }
+
+        @keyframes fadeIn {
+            from {opacity: 0; transform: scale(0.9);}
+            to {opacity: 1; transform: scale(1);}
+        }
+
         input[type="text"] {
-            width: 250px;
-            padding: 10px;
-            margin: 8px 0;
-            font-size: 16px;
-        }
-        button {
-            background-color: #ff9800;
-            color: white;
-            padding: 10px 25px;
+            width: 90%;
+            padding: 12px;
+            margin: 10px 0;
             border: none;
             border-radius: 8px;
-            cursor: pointer;
             font-size: 16px;
         }
-        button:hover {
-            background-color: #fb8c00;
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #e91e63;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
         }
+
+        button:hover {
+            background-color: #c2185b;
+        }
+
         .error {
-            color: red;
+            color: #b71c1c;
+            font-weight: bold;
             margin-top: 15px;
         }
     </style>
 </head>
-<body>
 
+<body>
     <div class="card">
-        <h2>🎁 Intercambio de Regalos 🎁</h2>
-        <p>Ingresa tu nombre tal como está registrado.</p>
+        <h2>🎄 Intercambio Navideño 🎁</h2>
+        <p>Ingresa tu nombre para continuar</p>
 
         <form method="POST">
-            <input type="text" name="usuario" placeholder="Tu nombre" required><br><br>
-            <button type="submit">Entrar</button>
+            <input type="text" name="usuario" placeholder="Tu nombre..." required>
+            <button type="submit">Entrar 🎅</button>
         </form>
 
         {% if error %}
             <p class="error">{{ error }}</p>
         {% endif %}
     </div>
-
 </body>
 </html>

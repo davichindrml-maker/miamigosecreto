@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tu amigo secreto</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f6f6f6;
+            text-align: center;
+            margin-top: 80px;
+        }
+        .card {
+            background-color: white;
+            display: inline-block;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.15);
+        }
+        a.btn {
+            background-color: #2196F3;
+            color: white;
+            padding: 8px 18px;
+            margin: 6px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        a.btn:hover {
+            background-color: #1976D2;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>{{ nombre | capitalize }}, tu amigo secreto es:</h2>
+        <h1 style="color:green;">🎁 {{ asignado | capitalize }} 🎁</h1>
+
+        <p>Puedes ver lo que le gustaría recibir:</p>
+        <a href="{{ url_for('ver_wishlist') }}" class="btn">Ver su wishlist</a>
+        <a href="{{ url_for('opciones') }}" class="btn">Volver a opciones</a>
+    </div>
+
+</body>
+</html>

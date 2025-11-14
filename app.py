@@ -69,22 +69,23 @@ def wishlist():
 
     usuario = session["usuario"]
 
-    # Si ya tiene wishlist, mandarlo a opciones
-    if usuario in wishlists:
-        return redirect(url_for("opciones"))
-
+    # Cuando envía datos
     if request.method == "POST":
         item1 = request.form["item1"].strip()
         item2 = request.form["item2"].strip()
         item3 = request.form["item3"].strip()
 
-        # Guardar lista (puedes permitir menos de 3 si quieres)
         wishlists[usuario] = [item1, item2, item3]
-
-        # Después de guardar su wishlist, lo llevamos a opciones
         return redirect(url_for("opciones"))
 
-    return render_template("wishlist.html", nombre=usuario)
+    # GET → mostrar wishlist (sea nueva o para editar)
+    lista_actual = wishlists.get(usuario, ["", "", ""])
+
+    return render_template(
+        "wishlist.html",
+        nombre=usuario,
+        lista=lista_actual
+    )
 
 
 # ======================
@@ -197,3 +198,4 @@ def logout():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))  # Render le pasa el puerto por env
     app.run(host="0.0.0.0", port=port)
+

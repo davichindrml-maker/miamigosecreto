@@ -2,61 +2,77 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Opciones</title>
+    <title>Menú Principal 🎄</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f6f6f6;
+            font-family: 'Segoe UI', sans-serif;
+            background: url('https://i.imgur.com/X0uCq4n.jpg') center/cover no-repeat fixed;
             text-align: center;
-            margin-top: 80px;
+            padding-top: 80px;
         }
+
         .card {
-            background-color: white;
+            background-color: rgba(255,255,255,0.92);
             display: inline-block;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.15);
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.6);
+            animation: fadeIn 1s ease;
         }
-        button, a.btn {
-            background-color: #2196F3;
+
+        h2 {
+            color: #2e7d32;
+            font-size: 28px;
+        }
+
+        .btn {
+            background: #388e3c;
             color: white;
-            padding: 10px 22px;
-            margin: 8px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
+            padding: 12px 20px;
+            display: block;
+            margin: 12px auto;
+            border-radius: 10px;
+            width: 250px;
+            font-size: 17px;
             text-decoration: none;
-            display: inline-block;
+            transition: 0.3s;
         }
-        button:hover, a.btn:hover {
-            background-color: #1976D2;
+
+        .btn:hover {
+            background: #2e7d32;
+            transform: scale(1.05);
         }
+
         .logout {
-            background-color: #f44336;
+            background: #c62828 !important;
         }
+
         .logout:hover {
-            background-color: #d32f2f;
+            background: #b71c1c !important;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(10px);}
+            to {opacity: 1; transform: translateY(0);}
         }
     </style>
 </head>
+
 <body>
 
     <div class="card">
-        <h2>Bienvenido, {{ user | capitalize }} 🎄</h2>
+        <h2>🎅 Hola {{ user | capitalize }} 🎄</h2>
 
         {% if ya_asignado %}
-            <p>Ya tienes asignado a tu amigo secreto: <b>{{ asignado | capitalize }}</b></p>
+            <p style="color:green;">🎁 Ya tienes un amigo secreto: <b>{{ asignado | capitalize }}</b></p>
         {% else %}
-            <p>Aún no se te ha asignado a quién le vas a regalar.</p>
+            <p style="color:#c62828;">Aún no conoces a tu amigo secreto.</p>
         {% endif %}
 
-        <div>
-            <a href="{{ url_for('asignar') }}" class="btn">🎁 ¿Quién me tocó?</a>
-            <a href="{{ url_for('ver_wishlist') }}" class="btn">📜 Ver wishlist de mi amigo secreto</a>
-            <a href="{{ url_for('wishlist') }}" class="btn">📝 Ver / editar mi wishlist</a>
-            <a href="{{ url_for('logout') }}" class="btn logout">Cerrar sesión</a>
-        </div>
+        <a class="btn" href="{{ url_for('asignar') }}">🎁 ¿Quién me tocó?</a>
+        <a class="btn" href="{{ url_for('ver_wishlist') }}">📜 Ver wishlist de mi amigo</a>
+        <a class="btn" href="{{ url_for('wishlist') }}">📝 Editar mi wishlist</a>
+        <a class="btn logout" href="{{ url_for('logout') }}">Cerrar sesión</a>
     </div>
 
 </body>

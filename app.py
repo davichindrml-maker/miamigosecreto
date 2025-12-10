@@ -33,13 +33,14 @@ firebase_admin.initialize_app(cred, {
 # ======================
 DIC = {
     "nombre": [
-        "davidlima",
-        "claubb",
-        "gomitas",
-        "jhoy",
-        "herson",
-        "esqueyosoyasi",
-        "funco"
+        "davicho",
+        "carlis",
+        "nadiabb",
+        "tiopedro",
+        "tiacarla",
+        "tiabrasy",
+        "tianadia",
+        "pedrinho"
     ]
 }
 
@@ -273,6 +274,7 @@ def logout():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))  # Render le pasa el puerto por env
     app.run(host="0.0.0.0", port=port)
+
 
 
 

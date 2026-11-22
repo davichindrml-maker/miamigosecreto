@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block titulo %}Intercambio de Regalos 🎄{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+</head>
+<body {% block atributos_body %}{% endblock %}>
+    <canvas id="nieve"></canvas>
+    <div class="luces"></div>
+
+    <main class="contenedor {% block clase_contenedor %}{% endblock %}">
+        {% block contenido %}{% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='efectos.js') }}"></script>
+</body>
+</html>

@@ -1,106 +1,25 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Intercambio de Regalos 🎄</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),
-                        url('https://i.imgur.com/YJ5Yg1V.jpeg') center/cover no-repeat;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+{% extends "base.html" %}
+{% block contenido %}
+<div class="tarjeta">
+    <div class="emoji-grande">🎄</div>
+    <h1>Intercambio Navideño 🎁</h1>
+    <p>Pega el código de tu grupo y escribe tu nombre</p>
 
-        .card {
-            background: rgba(255,255,255,0.9);
-            padding: 40px;
-            border-radius: 15px;
-            width: 350px;
-            text-align: center;
-            box-shadow: 0 0 15px rgba(255,255,255,0.7);
-            animation: fadeIn 1.2s ease;
-        }
+    <form method="POST">
+        <input type="text" name="codigo" class="codigo" placeholder="Código del grupo"
+               value="{{ codigo or '' }}" maxlength="12" autocomplete="off"
+               autocapitalize="characters" spellcheck="false" required>
+        <label class="campo" for="usuario">Tu nombre</label>
+        <input type="text" id="usuario" name="usuario" placeholder="Ej. Tía Carla"
+               value="{{ nombre or '' }}" maxlength="40" required>
+        <button type="submit" class="btn">Entrar 🎅</button>
+    </form>
 
-        @keyframes fadeIn {
-            from {opacity: 0; transform: scale(0.9);}
-            to {opacity: 1; transform: scale(1);}
-        }
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
 
-        input[type="text"] {
-            width: 90%;
-            padding: 12px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #e91e63;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: 0.3s;
-        }
-
-        button:hover {
-            background-color: #c2185b;
-        }
-
-        input.codigo {
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        input.codigo::placeholder {
-            letter-spacing: normal;
-            font-weight: normal;
-            text-transform: none;
-        }
-
-        .ayuda {
-            font-size: 13px;
-            color: #555;
-            margin-top: 15px;
-        }
-
-        .error {
-            color: #b71c1c;
-            font-weight: bold;
-            margin-top: 15px;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="card">
-        <h2>🎄 Intercambio Navideño 🎁</h2>
-        <p>Pega el código de tu grupo y escribe tu nombre</p>
-
-        <form method="POST">
-            <input type="text" name="codigo" class="codigo" placeholder="Código del grupo"
-                   value="{{ codigo or '' }}" maxlength="12" autocomplete="off"
-                   autocapitalize="characters" spellcheck="false" required>
-            <input type="text" name="usuario" placeholder="Tu nombre..."
-                   value="{{ nombre or '' }}" maxlength="40" required>
-            <button type="submit">Entrar 🎅</button>
-        </form>
-
-        <p class="ayuda">¿Ya te habías registrado? Escribe tu nombre igual que la primera vez.</p>
-
-        {% if error %}
-            <p class="error">{{ error }}</p>
-        {% endif %}
-    </div>
-</body>
-</html>
+    <p class="ayuda">¿Ya te habías registrado? Escribe tu nombre igual que la primera vez.<br>
+        ¿Primera vez? <a href="{{ url_for('manual') }}">Lee el mini manual 📖</a></p>
+</div>
+{% endblock %}

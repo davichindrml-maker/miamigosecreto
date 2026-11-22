@@ -9,6 +9,7 @@ import re
 import secrets
 import time
 import unicodedata
+from datetime import date, datetime, timedelta, timezone
 
 # ====== FIREBASE ======
 import firebase_admin
@@ -46,9 +47,12 @@ firebase_admin.initialize_app(cred, {
 #   {CODIGO}/
 #     nombre: "Familia"
 #     estado: "abierto" | "sorteado"
+#     fecha: "2026-12-24"        (opcional, día del intercambio)
+#     presupuesto_min / presupuesto_max: pesos (por defecto 200 y 500)
 #     creado: timestamp
 #     participantes/{clave}: {nombre: "Tía Carla", registrado: timestamp}
 #     wishlists/{clave}: ["regalo 1", "regalo 2", "regalo 3"]
+#     notas/{clave}: "talla M, color negro, link..."   (opcional)
 #     asignaciones/{clave}: clave_del_amigo_secreto
 #     vistos/{clave}: true   (ya abrió "¿Quién me tocó?")
 
@@ -57,6 +61,9 @@ LARGO_CODIGO = 6
 # Sin 0/O ni 1/I/L para que no se confundan al copiarlo a mano
 ALFABETO_CODIGO = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"
 LARGO_MAX_NOMBRE = 40
+LARGO_MAX_NOTA = 200
+PRESUPUESTO_MIN_DEFECTO = 200
+PRESUPUESTO_MAX_DEFECTO = 500
 
 
 class ErrorGrupo(Exception):
@@ -126,6 +133,76 @@ def nombre_de(grupo, clave: str) -> str:
     return clave
 
 
+def _hoy() -> date:
+    try:
+        from zoneinfo import ZoneInfo
+        return datetime.now(ZoneInfo("America/Mexico_City")).date()
+    except Exception:  # sin base de zonas horarias: UTC-6 fijo
+        return datetime.now(timezone(timedelta(hours=-6))).date()
+
+
+def _entero(valor, defecto):
+    try:
+        return int(valor)
+    except (TypeError, ValueError):
+        return defecto
+
+
+def presupuesto_de(grupo):
+    """(mínimo, máximo) en pesos."""
+    minimo = _entero((grupo or {}).get("presupuesto_min"), PRESUPUESTO_MIN_DEFECTO)
+    maximo = _entero((grupo or {}).get("presupuesto_max"), PRESUPUESTO_MAX_DEFECTO)
+    return minimo, maximo
+
+
+MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio",
+         "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
+
+
+def info_fecha(grupo):
+    """Devuelve None o {texto, dias, mensaje} para la cuenta regresiva."""
+    try:
+        f = date.fromisoformat((grupo or {}).get("fecha") or "")
+    except ValueError:
+        return None
+    dias = (f - _hoy()).days
+    texto = f"{f.day} de {MESES[f.month - 1]}"
+    if dias > 1:
+        mensaje = f"Faltan {dias} días"
+    elif dias == 1:
+        mensaje = "¡Es mañana!"
+    elif dias == 0:
+        mensaje = "¡Es hoy! 🎉"
+    else:
+        mensaje = "El intercambio ya pasó"
+    return {"texto": texto, "dias": dias, "mensaje": mensaje}
+
+
+def guardar_config(codigo: str, fecha: str, minimo, maximo):
+    """Guarda fecha y presupuesto del grupo; lanza ErrorGrupo si algo no cuadra."""
+    fecha = (fecha or "").strip()
+    if fecha:
+        try:
+            date.fromisoformat(fecha)
+        except ValueError:
+            raise ErrorGrupo("La fecha no es válida.")
+    try:
+        minimo, maximo = int(minimo), int(maximo)
+    except (TypeError, ValueError):
+        raise ErrorGrupo("El presupuesto debe ser un número.")
+    if not (0 <= minimo <= maximo <= 100000):
+        raise ErrorGrupo("El presupuesto mínimo debe ser menor o igual al máximo.")
+    ref = ref_grupo(codigo)
+    if ref.get() is None:
+        raise ErrorGrupo("Ese grupo ya no existe.")
+    ref_grupo(codigo, "presupuesto_min").set(minimo)
+    ref_grupo(codigo, "presupuesto_max").set(maximo)
+    if fecha:
+        ref_grupo(codigo, "fecha").set(fecha)
+    else:
+        ref_grupo(codigo, "fecha").delete()
+
+
 def crear_grupo(nombre: str) -> str:
     """Crea un grupo nuevo y devuelve su código."""
     for _ in range(20):
@@ -135,6 +212,8 @@ def crear_grupo(nombre: str) -> str:
                 "nombre": nombre,
                 "estado": "abierto",
                 "creado": int(time.time()),
+                "presupuesto_min": PRESUPUESTO_MIN_DEFECTO,
+                "presupuesto_max": PRESUPUESTO_MAX_DEFECTO,
             })
             return codigo
     raise ErrorGrupo("No se pudo generar un código. Intenta de nuevo.")
@@ -188,6 +267,30 @@ def obtener_wishlist(codigo: str, clave: str):
 
 def guardar_wishlist(codigo: str, clave: str, lista):
     ref_grupo(codigo, "wishlists", clave).set(lista)
+
+
+def obtener_nota(codigo: str, clave: str) -> str:
+    data = ref_grupo(codigo, "notas", clave).get()
+    return data if isinstance(data, str) else ""
+
+
+def guardar_nota(codigo: str, clave: str, nota: str):
+    nota = " ".join((nota or "").split())[:LARGO_MAX_NOTA]
+    if nota:
+        ref_grupo(codigo, "notas", clave).set(nota)
+    else:
+        ref_grupo(codigo, "notas", clave).delete()
+
+
+def contexto_grupo(grupo) -> dict:
+    """Datos del grupo que usan varias páginas (presupuesto y cuenta regresiva)."""
+    minimo, maximo = presupuesto_de(grupo)
+    return {
+        "grupo_nombre": (grupo or {}).get("nombre", ""),
+        "pmin": minimo,
+        "pmax": maximo,
+        "fecha": info_fecha(grupo),
+    }
 
 
 def sortear_grupo(codigo: str):
@@ -294,6 +397,7 @@ def wishlist(codigo, clave, grupo):
             request.form.get("item3", "").strip(),
         ]
         guardar_wishlist(codigo, clave, lista)
+        guardar_nota(codigo, clave, request.form.get("nota", ""))
         return redirect(url_for("opciones"))
 
     lista_actual = obtener_wishlist(codigo, clave)
@@ -303,8 +407,9 @@ def wishlist(codigo, clave, grupo):
     return render_template(
         "wishlist.html",
         nombre=nombre_de(grupo, clave),
-        grupo_nombre=grupo.get("nombre", ""),
         lista=lista_actual,
+        nota=obtener_nota(codigo, clave),
+        **contexto_grupo(grupo),
     )
 
 
@@ -330,10 +435,10 @@ def opciones(codigo, clave, grupo):
     return render_template(
         "opciones.html",
         user=nombre_de(grupo, clave),
-        grupo_nombre=grupo.get("nombre", ""),
         sorteado=sorteado,
         asignado=asignado,
         participantes=nombres,
+        **contexto_grupo(grupo),
     )
 
 
@@ -363,6 +468,7 @@ def asignar(codigo, clave, grupo):
         "asignado.html",
         nombre=nombre_de(grupo, clave),
         asignado=nombre_de(grupo, asignado),
+        **contexto_grupo(grupo),
     )
 
 
@@ -388,7 +494,22 @@ def ver_wishlist(codigo, clave, grupo):
             f"Tu amigo secreto ({nombre_amigo}) aún no ha registrado su wishlist."
         )
 
-    return render_template("ver_wishlist.html", amigo=nombre_amigo, lista=lista)
+    return render_template(
+        "ver_wishlist.html",
+        amigo=nombre_amigo,
+        lista=lista,
+        nota=obtener_nota(codigo, asignado),
+        **contexto_grupo(grupo),
+    )
+
+
+# ======================
+#  RUTA: MINI MANUAL (pública)
+# ======================
+@app.route("/manual")
+def manual():
+    return render_template("manual.html", pmin=PRESUPUESTO_MIN_DEFECTO,
+                           pmax=PRESUPUESTO_MAX_DEFECTO)
 
 
 # ======================
@@ -445,17 +566,28 @@ def _vista_grupo(codigo, grupo):
     ]
     participantes.sort(key=lambda p: p["nombre"].lower())
     enlace = url_for("login", codigo=codigo, _external=True)
+    manual_url = url_for("manual", _external=True)
     nombre = grupo.get("nombre", "")
+    pmin, pmax = presupuesto_de(grupo)
+    fecha = info_fecha(grupo)
     invitacion = (
         f"🎁 ¡Únete al intercambio «{nombre}»!\n"
-        f"Entra a {enlace}\n"
-        f"Código del grupo: {codigo}"
+        f"1) Entra a {enlace}\n"
+        f"2) Código del grupo: {codigo} (ya viene en el enlace)\n"
+        f"3) Escribe tu nombre y pon 3 deseos\n"
+        f"💰 Presupuesto: de ${pmin} a ${pmax} pesos\n"
+        + (f"📅 Fecha del intercambio: {fecha['texto']}\n" if fecha else "")
+        + f"❓ ¿Dudas? Lee el mini manual: {manual_url}"
     )
     return {
         "codigo": codigo,
         "nombre": nombre,
         "sorteado": grupo.get("estado") == "sorteado",
         "creado": grupo.get("creado", 0),
+        "pmin": pmin,
+        "pmax": pmax,
+        "fecha_iso": grupo.get("fecha") or "",
+        "fecha": fecha,
         "participantes": participantes,
         "enlace": enlace,
         "invitacion": invitacion,
@@ -488,6 +620,22 @@ def admin_nuevo_grupo():
     try:
         codigo = crear_grupo(nombre)
         flash(f"✅ Grupo «{nombre}» creado. Código: {codigo}")
+    except ErrorGrupo as e:
+        flash(f"❌ {e}")
+    return redirect(url_for("admin"))
+
+
+@app.route("/admin/grupos/<codigo>/config", methods=["POST"])
+@requiere_admin
+def admin_config(codigo):
+    try:
+        guardar_config(
+            codigo,
+            request.form.get("fecha"),
+            request.form.get("pmin"),
+            request.form.get("pmax"),
+        )
+        flash("💾 Fecha y presupuesto guardados.")
     except ErrorGrupo as e:
         flash(f"❌ {e}")
     return redirect(url_for("admin"))
@@ -534,6 +682,7 @@ def admin_eliminar_participante(codigo, clave):
         return redirect(url_for("admin"))
     ref_grupo(codigo, "participantes", clave).delete()
     ref_grupo(codigo, "wishlists", clave).delete()
+    ref_grupo(codigo, "notas", clave).delete()
     flash(f"Se quitó a {nombre_de(grupo, clave)} del grupo «{grupo.get('nombre', '')}».")
     return redirect(url_for("admin"))
 

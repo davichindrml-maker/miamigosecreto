@@ -1,53 +1,26 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Wishlist de {{ amigo }}</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f6f6f6;
-            text-align: center;
-            margin-top: 80px;
-        }
-        .card {
-            background-color: white;
-            display: inline-block;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.15);
-        }
-        ul {
-            text-align: left;
-        }
-        a.btn {
-            background-color: #2196F3;
-            color: white;
-            padding: 8px 18px;
-            margin-top: 10px;
-            border-radius: 8px;
-            text-decoration: none;
-            display: inline-block;
-        }
-    </style>
-</head>
-<body>
+{% extends "base.html" %}
+{% block titulo %}Wishlist de {{ amigo }}{% endblock %}
+{% block contenido %}
+<div class="tarjeta">
+    <div class="emoji-grande">📜</div>
+    <h2>Wishlist de {{ amigo }}</h2>
 
-    <div class="card">
-        <h2>Wishlist de {{ amigo }}</h2>
+    {% include "_chips.html" %}
 
-        {% if lista %}
-            <ul>
-                {% for item in lista %}
-                    <li>{{ item }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>Esta persona aún no ha registrado su wishlist.</p>
-        {% endif %}
+    {% if lista %}
+        <ul class="deseos">
+            {% for item in lista %}
+                <li>🎁 {{ item }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Esta persona aún no ha registrado su wishlist.</p>
+    {% endif %}
 
-        <a href="{{ url_for('opciones') }}" class="btn">Volver a opciones</a>
-    </div>
+    {% if nota %}
+        <div class="nota-extra">📌 <b>Extra:</b> {{ nota }}</div>
+    {% endif %}
 
-</body>
-</html>
+    <a class="btn gris" href="{{ url_for('opciones') }}">Volver a opciones</a>
+</div>
+{% endblock %}

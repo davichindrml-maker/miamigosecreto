@@ -15,12 +15,18 @@
 
     <a class="btn azul" style="margin:0 0 14px;" href="{{ url_for('ideas_regalo') }}">💡 ¿No sabes qué pedir? Te ayudo</a>
 
-    <p>Escribe 3 cosas que te gustaría recibir:</p>
+    <p>Escribe al menos 3 cosas que te gustaría recibir (puedes poner más):</p>
 
     <form method="POST">
-        <input type="text" name="item1" value="{{ lista[0] }}" placeholder="🎁 Regalo 1" maxlength="120" required>
-        <input type="text" name="item2" value="{{ lista[1] }}" placeholder="🎁 Regalo 2" maxlength="120" required style="margin-top:10px;">
-        <input type="text" name="item3" value="{{ lista[2] }}" placeholder="🎁 Regalo 3" maxlength="120" required style="margin-top:10px;">
+        <div id="deseos">
+            {% for item in lista %}
+                <input type="text" name="item{{ loop.index }}" value="{{ item }}"
+                       placeholder="🎁 Regalo {{ loop.index }}{% if loop.index > 3 %} (opcional){% endif %}"
+                       maxlength="120" {% if loop.index <= 3 %}required{% endif %}
+                       {% if not loop.first %}style="margin-top:10px;"{% endif %}>
+            {% endfor %}
+        </div>
+        <button type="button" class="btn gris" id="mas" style="margin-top:10px;">➕ Agregar otro deseo</button>
 
         <label class="campo" for="nota">Talla, color o link (opcional)</label>
         <input type="text" id="nota" name="nota" value="{{ nota }}" maxlength="200"
@@ -31,4 +37,24 @@
 
     <a class="btn gris" href="{{ url_for('opciones') }}">Volver</a>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    (function () {
+        var cont = document.getElementById('deseos');
+        var boton = document.getElementById('mas');
+        var max = {{ max_deseos }};
+        function revisar() { boton.style.display = cont.children.length >= max ? 'none' : ''; }
+        boton.addEventListener('click', function () {
+            var n = cont.children.length + 1;
+            var campo = document.createElement('input');
+            campo.type = 'text'; campo.name = 'item' + n; campo.maxLength = 120;
+            campo.placeholder = '🎁 Regalo ' + n + ' (opcional)';
+            campo.style.marginTop = '10px';
+            cont.appendChild(campo); campo.focus(); revisar();
+        });
+        revisar();
+    })();
+</script>
 {% endblock %}

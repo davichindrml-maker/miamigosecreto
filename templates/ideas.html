@@ -10,7 +10,7 @@
 
     {% if resultados is not none %}
         {% if resultados %}
-            <p><b>Ideas dentro de tu presupuesto.</b><br>Elige hasta 3 y las paso a tu wishlist.</p>
+            <p><b>Ideas dentro de tu presupuesto.</b><br>Elige hasta 5 y las paso a tu wishlist.</p>
 
             <form method="POST" action="{{ url_for('ideas_usar') }}" id="form-ideas">
                 {% for r in resultados %}
@@ -20,7 +20,7 @@
                     <input type="checkbox" name="idea" value="{{ r.id }}">
                 </label>
                 {% endfor %}
-                <p class="ayuda" id="contador">Elegidas: 0 de 3</p>
+                <p class="ayuda" id="contador">Elegidas: 0 de 5</p>
                 <button type="submit" class="btn verde">Pasar a mi wishlist 📝</button>
             </form>
 
@@ -76,8 +76,8 @@
         var contador = document.getElementById('contador');
         function actualizar(e) {
             var marcadas = form.querySelectorAll('input[name=idea]:checked');
-            if (marcadas.length > 3 && e) { e.target.checked = false; marcadas = form.querySelectorAll('input[name=idea]:checked'); }
-            contador.textContent = 'Elegidas: ' + marcadas.length + ' de 3';
+            if (marcadas.length > 5 && e) { e.target.checked = false; marcadas = form.querySelectorAll('input[name=idea]:checked'); }
+            contador.textContent = 'Elegidas: ' + marcadas.length + ' de 5';
         }
         cajas.forEach(function (c) { c.addEventListener('change', actualizar); });
     })();

@@ -263,6 +263,17 @@ h3.pregunta small { font-family: inherit; font-weight: 400; color: #5b4a3e; }
 .idea .txt small { display: block; font-weight: 400; color: #5b4a3e; margin-top: 3px; }
 .idea input { width: 22px; height: 22px; accent-color: var(--verde); flex: none; }
 
+/* ---- troleo ---- */
+.barra { height: 22px; border: 3px solid var(--tinta); border-radius: 12px; background: #fffcf4; overflow: hidden; margin: 18px 0 6px; }
+.relleno { height: 100%; width: 0; background: var(--rojo); animation: llenar 2.4s ease-out forwards; }
+@keyframes llenar { 0% { width: 0; } 70% { width: 99%; } 100% { width: 99%; } }
+.troll .estado { font-size: 14px; color: #5b4a3e; margin: 0; animation: ocultar 0.3s ease 3.1s forwards; }
+@keyframes ocultar { to { opacity: 0; height: 0; margin: 0; } }
+.sorpresa { opacity: 0; animation: aparecer-sorpresa 0.5s ease 3.1s forwards; }
+@keyframes aparecer-sorpresa { from { opacity: 0; transform: scale(0.8) rotate(-3deg); } to { opacity: 1; transform: none; } }
+.sorpresa .ilustra svg { animation: burla 1.6s ease-in-out 3.6s infinite; }
+@keyframes burla { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+
 /* ---- manual ---- */
 .pasos { list-style: none; counter-reset: paso; padding: 0; margin: 18px 0; text-align: left; }
 
@@ -308,4 +319,4 @@ h3.pregunta small { font-family: inherit; font-weight: 400; color: #5b4a3e; }
     .revelado { font-size: 34px; }
 }
 
-@media (prefers-reduced-motion: reduce) { .tarjeta, .revelado { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .tarjeta, .revelado, .relleno, .sorpresa, .sorpresa .ilustra svg, .troll .estado { animation: none; } .relleno { width: 99%; } .sorpresa { opacity: 1; } }

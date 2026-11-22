@@ -1,6 +1,6 @@
 <div class="chips">
-    <span class="chip dinero">💰 ${{ pmin }} – ${{ pmax }} pesos</span>
+    <span class="chip dinero">{{ icono('moneda', 22) }} ${{ pmin }} – ${{ pmax }} pesos</span>
     {% if fecha %}
-        <span class="chip fecha">📅 {{ fecha.texto }} · {{ fecha.mensaje }}</span>
+        <span class="chip fecha">{{ icono('calendario', 22) }} {{ fecha.texto }} · {{ fecha.mensaje }}</span>
     {% endif %}
 </div>

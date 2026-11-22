@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Panel del organizador 🎄</title>
+    <title>Panel del organizador </title>
     <style>
         * { box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #1b5e20, #b71c1c) fixed;
+            background: #1f3d2e;
             margin: 0;
             padding: 30px 15px 60px;
             color: #333;
@@ -166,7 +166,7 @@
 <div class="contenedor">
 
     <div class="encabezado">
-        <h1>🎅 Panel del organizador</h1>
+        <h1>Panel del organizador</h1>
         <div>
             <a href="{{ url_for('login') }}">Página de participantes</a>
             <a href="{{ url_for('admin_salir') }}">Salir</a>
@@ -178,7 +178,7 @@
     {% endfor %}
 
     <div class="card">
-        <h3 style="margin-top:0;">➕ Crear un grupo nuevo</h3>
+        <h3 style="margin-top:0;">Crear un grupo nuevo</h3>
         <form class="nuevo" method="POST" action="{{ url_for('admin_nuevo_grupo') }}">
             <input type="text" name="nombre" placeholder="Ej. Amigos, Familia..." maxlength="40" required>
             <button type="submit">Generar código</button>
@@ -194,25 +194,25 @@
         <div class="titulo-grupo">
             <h2>{{ g.nombre }}</h2>
             {% if g.sorteado %}
-                <span class="estado sorteado">🎲 Sorteo hecho</span>
+                <span class="estado sorteado">Sorteo hecho</span>
             {% else %}
-                <span class="estado abierto">🔓 Registro abierto</span>
+                <span class="estado abierto">Registro abierto</span>
             {% endif %}
         </div>
 
         <div class="codigo">{{ g.codigo }}</div>
         <div class="compartir">
-            <button type="button" class="azul copiar" data-texto="{{ g.codigo }}">📋 Copiar código</button>
-            <button type="button" class="azul copiar" data-texto="{{ g.invitacion }}">✉️ Copiar invitación</button>
+            <button type="button" class="azul copiar" data-texto="{{ g.codigo }}">Copiar código</button>
+            <button type="button" class="azul copiar" data-texto="{{ g.invitacion }}">Copiar invitación</button>
             <a class="boton verde-wa" target="_blank" rel="noopener"
                href="https://wa.me/?text={{ g.invitacion | urlencode }}">WhatsApp</a>
         </div>
 
         <form class="config" method="POST" action="{{ url_for('admin_config', codigo=g.codigo) }}">
-            <label>📅 Fecha del intercambio
+            <label>Fecha del intercambio
                 <input type="date" name="fecha" value="{{ g.fecha_iso }}">
             </label>
-            <label>💰 Mínimo $
+            <label>Mínimo $
                 <input type="number" name="pmin" value="{{ g.pmin }}" min="0" max="100000" step="10" required>
             </label>
             <label>Máximo $
@@ -220,7 +220,7 @@
             </label>
             <button type="submit" class="azul">Guardar</button>
         </form>
-        {% if g.fecha %}<p class="nota">📅 {{ g.fecha.texto }} · {{ g.fecha.mensaje }}</p>{% endif %}
+        {% if g.fecha %}<p class="nota">{{ g.fecha.texto }} · {{ g.fecha.mensaje }}</p>{% endif %}
 
         {% if g.participantes %}
         <table>
@@ -233,15 +233,15 @@
             {% for p in g.participantes %}
             <tr>
                 <td>{{ p.nombre }}</td>
-                <td class="centro">{{ '✅' if p.wishlist else '⏳' }}</td>
+                <td class="centro">{{ icono('check', 24) if p.wishlist else icono('reloj', 24) }}</td>
                 {% if g.sorteado %}
-                    <td class="centro">{{ '✅' if p.visto else '⏳' }}</td>
+                    <td class="centro">{{ icono('check', 24) if p.visto else icono('reloj', 24) }}</td>
                 {% else %}
                     <td class="centro">
                         <form method="POST" style="margin:0;"
                               action="{{ url_for('admin_eliminar_participante', codigo=g.codigo, clave=p.clave) }}"
                               data-confirmar="¿Quitar a {{ p.nombre }} del grupo?">
-                            <button type="submit" class="quitar" title="Quitar del grupo">✕</button>
+                            <button type="submit" class="quitar" title="Quitar del grupo" aria-label="Quitar del grupo">{{ icono('x', 18) }}</button>
                         </form>
                     </td>
                 {% endif %}
@@ -257,7 +257,7 @@
                 <form method="POST" action="{{ url_for('admin_sortear', codigo=g.codigo) }}"
                       data-confirmar="¿Ya están todos? Después del sorteo nadie más se puede unir.">
                     <button type="submit" {% if g.participantes | length < minimo %}disabled{% endif %}>
-                        🎲 Cerrar registro y hacer sorteo
+                        Cerrar registro y hacer sorteo
                     </button>
                 </form>
                 {% if g.participantes | length < minimo %}
@@ -266,12 +266,12 @@
             {% else %}
                 <form method="POST" action="{{ url_for('admin_reabrir', codigo=g.codigo) }}"
                       data-confirmar="Esto borra el sorteo actual y vuelve a abrir el registro. ¿Continuar?">
-                    <button type="submit" class="gris">🔓 Deshacer sorteo y reabrir</button>
+                    <button type="submit" class="gris">Deshacer sorteo y reabrir</button>
                 </form>
             {% endif %}
             <form method="POST" action="{{ url_for('admin_eliminar_grupo', codigo=g.codigo) }}"
                   data-confirmar="¿Eliminar el grupo «{{ g.nombre }}» con todos sus datos?">
-                <button type="submit" class="rojo">🗑️ Eliminar grupo</button>
+                <button type="submit" class="rojo">Eliminar grupo</button>
             </form>
         </div>
     </div>
@@ -290,7 +290,7 @@
             var texto = btn.getAttribute('data-texto');
             var original = btn.textContent;
             var listo = function () {
-                btn.textContent = '✅ ¡Copiado!';
+                btn.textContent = '¡Copiado!';
                 setTimeout(function () { btn.textContent = original; }, 1500);
             };
             if (navigator.clipboard && window.isSecureContext) {

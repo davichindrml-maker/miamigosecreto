@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block titulo %}Intercambio de Regalos 🎄{% endblock %}</title>
+    <title>{% block titulo %}Intercambio de regalos{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
 </head>
 <body {% block atributos_body %}{% endblock %}>
     <canvas id="nieve"></canvas>
-    <div class="luces"></div>
+    <div class="guirnalda"></div>
 
     <main class="contenedor {% block clase_contenedor %}{% endblock %}">
         {% block contenido %}{% endblock %}

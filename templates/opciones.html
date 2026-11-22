@@ -1,30 +1,34 @@
 {% extends "base.html" %}
-{% block titulo %}Menú Principal 🎄{% endblock %}
+{% block titulo %}Menú principal{% endblock %}
 {% block contenido %}
 <div class="tarjeta">
-    <div class="emoji-grande">🎅</div>
-    <h2>Hola {{ user }} 🎄</h2>
+    <div class="ilustra">
+        <span class="chico">{{ icono('calcetin', 50) }}</span>
+        {{ icono('arbol', 84) }}
+        <span class="chico der">{{ icono('baston', 50) }}</span>
+    </div>
+    <h2>Hola, {{ user }}</h2>
     <p style="margin:0;">Grupo: <b>{{ grupo_nombre }}</b></p>
 
     {% include "_chips.html" %}
 
     {% if asignado %}
-        <p style="color:#1f7a42;">🎁 Ya tienes un amigo secreto: <b>{{ asignado }}</b></p>
+        <p style="color:#2d6a4f;">Ya tienes un amigo secreto: <b>{{ asignado }}</b></p>
     {% elif sorteado %}
-        <p style="color:#1f7a42;">🎲 ¡Ya se hizo el sorteo! Descubre quién te tocó.</p>
+        <p style="color:#2d6a4f;">Ya se hizo el sorteo. Descubre quién te tocó.</p>
     {% else %}
-        <p style="color:#b71c3a;">El sorteo todavía no se hace.<br>Espera a que todos se registren.</p>
+        <p style="color:#9e2a22;">El sorteo todavía no se hace.<br>Espera a que todos se registren.</p>
     {% endif %}
 
-    <a class="btn verde" href="{{ url_for('asignar') }}">🎁 ¿Quién me tocó?</a>
-    <a class="btn azul" href="{{ url_for('ver_wishlist') }}">📜 Ver wishlist de mi amigo</a>
-    <a class="btn azul" href="{{ url_for('wishlist') }}">📝 Editar mi wishlist</a>
-    <a class="btn azul" href="{{ url_for('ideas_regalo') }}">💡 ¿No sabes qué pedir?</a>
-    <a class="btn gris" href="{{ url_for('manual') }}">📖 Mini manual</a>
+    <a class="btn verde" href="{{ url_for('asignar') }}">{{ icono('regalo', 28) }} ¿Quién me tocó?</a>
+    <a class="btn azul" href="{{ url_for('ver_wishlist') }}">{{ icono('lista', 28) }} Wishlist de mi amigo</a>
+    <a class="btn azul" href="{{ url_for('wishlist') }}">{{ icono('lapiz', 28) }} Editar mi wishlist</a>
+    <a class="btn azul" href="{{ url_for('ideas_regalo') }}">{{ icono('foco', 28) }} ¿No sabes qué pedir?</a>
+    <a class="btn gris" href="{{ url_for('manual') }}">{{ icono('libro', 24) }} Mini manual</a>
     <a class="btn gris" href="{{ url_for('logout') }}">Cerrar sesión / cambiar de grupo</a>
 
     <details class="lista">
-        <summary>👥 En este grupo ({{ participantes | length }})</summary>
+        <summary>En este grupo ({{ participantes | length }})</summary>
         <p>{{ participantes | join(', ') }}</p>
     </details>
 </div>

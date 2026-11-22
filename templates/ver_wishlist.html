@@ -2,7 +2,7 @@
 {% block titulo %}Wishlist de {{ amigo }}{% endblock %}
 {% block contenido %}
 <div class="tarjeta">
-    <div class="emoji-grande">📜</div>
+    <div class="ilustra">{{ icono('lista', 78) }}</div>
     <h2>Wishlist de {{ amigo }}</h2>
 
     {% include "_chips.html" %}
@@ -10,7 +10,7 @@
     {% if lista %}
         <ul class="deseos">
             {% for item in lista %}
-                <li>🎁 {{ item }}</li>
+                <li>{{ item }}</li>
             {% endfor %}
         </ul>
     {% else %}
@@ -18,7 +18,7 @@
     {% endif %}
 
     {% if nota %}
-        <div class="nota-extra">📌 <b>Extra:</b> {{ nota }}</div>
+        <div class="nota-extra">{{ icono('pin', 30) }} <div><b>Extra:</b> {{ nota }}</div></div>
     {% endif %}
 
     <a class="btn gris" href="{{ url_for('opciones') }}">Volver a opciones</a>

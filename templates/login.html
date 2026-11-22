@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 {% block contenido %}
 <div class="tarjeta">
-    <div class="emoji-grande">🎄</div>
-    <h1>Intercambio Navideño 🎁</h1>
-    <p>Pega el código de tu grupo y escribe tu nombre</p>
+    <div class="ilustra">
+        <span class="chico">{{ icono('regalo', 52) }}</span>
+        {{ icono('arbol', 100) }}
+        <span class="chico der">{{ icono('bola', 52) }}</span>
+    </div>
+    <h1>Intercambio navideño</h1>
+    <p>Pega el código de tu grupo y escribe tu nombre.</p>
 
     <form method="POST">
         <input type="text" name="codigo" class="codigo" placeholder="Código del grupo"
@@ -12,7 +16,7 @@
         <label class="campo" for="usuario">Tu nombre</label>
         <input type="text" id="usuario" name="usuario" placeholder="Ej. Tía Carla"
                value="{{ nombre or '' }}" maxlength="40" required>
-        <button type="submit" class="btn">Entrar 🎅</button>
+        <button type="submit" class="btn">Entrar</button>
     </form>
 
     {% if error %}
@@ -20,6 +24,6 @@
     {% endif %}
 
     <p class="ayuda">¿Ya te habías registrado? Escribe tu nombre igual que la primera vez.<br>
-        ¿Primera vez? <a href="{{ url_for('manual') }}">Lee el mini manual 📖</a></p>
+        ¿Primera vez? <a href="{{ url_for('manual') }}">Lee el mini manual</a>.</p>
 </div>
 {% endblock %}

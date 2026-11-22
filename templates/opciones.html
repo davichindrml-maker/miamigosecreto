@@ -51,6 +51,24 @@
             background: #b71c1c !important;
         }
 
+        .grupo {
+            margin-top: -10px;
+            color: #555;
+        }
+
+        .lista {
+            margin-top: 18px;
+            max-width: 290px;
+            margin-left: auto;
+            margin-right: auto;
+            color: #444;
+            font-size: 14px;
+        }
+
+        .lista summary {
+            cursor: pointer;
+        }
+
         @keyframes fadeIn {
             from {opacity: 0; transform: translateY(10px);}
             to {opacity: 1; transform: translateY(0);}
@@ -61,18 +79,26 @@
 <body>
 
     <div class="card">
-        <h2>🎅 Hola {{ user | capitalize }} 🎄</h2>
+        <h2>🎅 Hola {{ user }} 🎄</h2>
+        <p class="grupo">Grupo: <b>{{ grupo_nombre }}</b></p>
 
-        {% if ya_asignado %}
-            <p style="color:green;">🎁 Ya tienes un amigo secreto: <b>{{ asignado | capitalize }}</b></p>
+        {% if asignado %}
+            <p style="color:green;">🎁 Ya tienes un amigo secreto: <b>{{ asignado }}</b></p>
+        {% elif sorteado %}
+            <p style="color:#2e7d32;">🎲 ¡Ya se hizo el sorteo! Descubre quién te tocó.</p>
         {% else %}
-            <p style="color:#c62828;">Aún no conoces a tu amigo secreto.</p>
+            <p style="color:#c62828;">El sorteo todavía no se hace.<br>Espera a que todos se registren.</p>
         {% endif %}
 
         <a class="btn" href="{{ url_for('asignar') }}">🎁 ¿Quién me tocó?</a>
         <a class="btn" href="{{ url_for('ver_wishlist') }}">📜 Ver wishlist de mi amigo</a>
         <a class="btn" href="{{ url_for('wishlist') }}">📝 Editar mi wishlist</a>
-        <a class="btn logout" href="{{ url_for('logout') }}">Cerrar sesión</a>
+        <a class="btn logout" href="{{ url_for('logout') }}">Cerrar sesión / cambiar de grupo</a>
+
+        <details class="lista">
+            <summary>👥 En este grupo ({{ participantes | length }})</summary>
+            <p>{{ participantes | join(', ') }}</p>
+        </details>
     </div>
 
 </body>

@@ -638,6 +638,29 @@ def manual():
 
 
 # ======================
+#  RUTA: "VER A QUIÉN LE TOCÓ A CADA QUIÉN" (es una broma: no enseña nada)
+# ======================
+FRASES_TROLL = [
+    "¿De verdad creíste que te lo iba a enseñar?",
+    "Qué curioso saliste, {nombre}.",
+    "Error 404: chisme no encontrado.",
+    "Ni el organizador sabe. Calma, ya llegará tu regalo.",
+    "Aquí no hay spoilers. Mejor ve pensando en el regalo de tu amigo secreto.",
+    "Te vi intentándolo, {nombre}.",
+    "Los secretos se quedan en el secreto. Buen intento.",
+]
+
+
+@app.route("/troll")
+@requiere_usuario
+def troll(codigo, clave, grupo):
+    nombre = nombre_de(grupo, clave)
+    return render_template(
+        "troll.html", frase=random.choice(FRASES_TROLL).format(nombre=nombre)
+    )
+
+
+# ======================
 #  RUTA: LOGOUT
 # ======================
 @app.route("/logout")

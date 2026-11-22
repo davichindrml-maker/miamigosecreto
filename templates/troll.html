@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block titulo %}Buscando chismes...{% endblock %}
+{% block contenido %}
+<div class="tarjeta troll">
+    <h2>Buscando a quién le tocó cada quién...</h2>
+
+    <div class="barra"><div class="relleno"></div></div>
+    <p class="estado">Cargando secretos... 99%</p>
+
+    <div class="sorpresa">
+        <div class="ilustra">{{ icono('duende', 150) }}</div>
+        <div class="revelado" style="font-size:30px;">{{ frase }}</div>
+        <a class="btn verde" href="{{ url_for('opciones') }}">Está bien, ya me regreso</a>
+    </div>
+</div>
+{% endblock %}

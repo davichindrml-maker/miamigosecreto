@@ -150,6 +150,24 @@ _ICONOS = {
         <rect x="12" y="28" width="40" height="29" rx="5" fill="{Y}"/>
         <circle cx="32" cy="41" r="4.2" fill="{K}"/><path d="M32 44 V50" stroke-width="3.4"/>
     """,
+    "duende": f"""
+        <path d="M12 41 L4 34 L14 31 Z" fill="#f3c9a0"/>
+        <path d="M52 41 L60 34 L50 31 Z" fill="#f3c9a0"/>
+        <ellipse cx="32" cy="42" rx="21" ry="19" fill="#f3c9a0"/>
+        <path d="M13 24 C14 13 26 6 44 4 C39 11 41 18 51 24 Z" fill="{R}"/>
+        <circle cx="45" cy="7.5" r="5" fill="{C}"/>
+        <rect x="10" y="22" width="44" height="8" rx="4" fill="{C}"/>
+        <ellipse cx="23" cy="42" rx="6.3" ry="5.4" fill="{C}"/>
+        <ellipse cx="41" cy="42" rx="6.3" ry="5.4" fill="{C}"/>
+        <circle cx="26.2" cy="43" r="2.4" fill="{K}" stroke="none"/>
+        <circle cx="44.2" cy="43" r="2.4" fill="{K}" stroke="none"/>
+        <path d="M16 35 H29" fill="none" stroke-width="2.6"/>
+        <path d="M35 35.5 Q41 31.5 47 34.5" fill="none" stroke-width="2.6"/>
+        <circle cx="13.5" cy="52" r="3.2" fill="{P}" stroke="none"/>
+        <circle cx="51.5" cy="52" r="3.2" fill="{P}" stroke="none"/>
+        <path d="M20 51 Q33 65 48 50 Z" fill="{C}"/>
+        <path d="M48 50 L52 47" fill="none" stroke-width="2.2"/>
+    """,
     "pin": f"""
         <path d="M32 58 L32 38" stroke-width="3.4"/>
         <circle cx="32" cy="25" r="16" fill="{R}"/>

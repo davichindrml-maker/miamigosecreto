@@ -64,6 +64,8 @@ LARGO_CODIGO = 6
 ALFABETO_CODIGO = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"
 LARGO_MAX_NOMBRE = 40
 LARGO_MAX_NOTA = 200
+MAX_DESEOS = 10
+MIN_DESEOS = 3
 PRESUPUESTO_MIN_DEFECTO = 200
 PRESUPUESTO_MAX_DEFECTO = 500
 
@@ -393,11 +395,12 @@ def login():
 @requiere_usuario
 def wishlist(codigo, clave, grupo):
     if request.method == "POST":
-        lista = [
-            request.form.get("item1", "").strip(),
-            request.form.get("item2", "").strip(),
-            request.form.get("item3", "").strip(),
+        todos = [
+            request.form.get(f"item{i}", "").strip()
+            for i in range(1, MAX_DESEOS + 1)
         ]
+        # Los primeros 3 siempre se guardan; los extras solo si traen algo
+        lista = todos[:MIN_DESEOS] + [x for x in todos[MIN_DESEOS:] if x]
         guardar_wishlist(codigo, clave, lista)
         guardar_nota(codigo, clave, request.form.get("nota", ""))
         return redirect(url_for("opciones"))
@@ -411,11 +414,15 @@ def wishlist(codigo, clave, grupo):
     huecos = [i for i, v in enumerate(lista_actual) if not v.strip()]
     for i, idea in zip(huecos, sugeridas):
         lista_actual[i] = idea
+    for idea in sugeridas[len(huecos):]:
+        if idea not in lista_actual and len(lista_actual) < MAX_DESEOS:
+            lista_actual.append(idea)
 
     return render_template(
         "wishlist.html",
         nombre=nombre_de(grupo, clave),
         lista=lista_actual,
+        max_deseos=MAX_DESEOS,
         nota=obtener_nota(codigo, clave),
         **contexto_grupo(grupo),
     )
@@ -467,7 +474,7 @@ def ideas_usar(codigo, clave, grupo):
         idea = ideas.POR_ID.get(_entero(valor, -1))
         if idea and idea["nombre"] not in elegidas:
             elegidas.append(idea["nombre"])
-    session["sugerencias"] = elegidas[:3]
+    session["sugerencias"] = elegidas[:5]
     return redirect(url_for("wishlist"))
 
 

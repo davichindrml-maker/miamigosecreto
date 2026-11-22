@@ -16,6 +16,10 @@
         <label class="campo" for="usuario">Tu nombre</label>
         <input type="text" id="usuario" name="usuario" placeholder="Ej. Tía Carla"
                value="{{ nombre or '' }}" maxlength="40" required>
+        <label class="campo" for="pin">Tu PIN de 4 números</label>
+        <input type="password" id="pin" name="pin" inputmode="numeric" pattern="[0-9]{4}"
+               maxlength="4" autocomplete="off" placeholder="Inventa uno y no lo olvides" required>
+        <p class="ayuda" style="margin:6px 0 0;text-align:left;">Es para que nadie más entre con tu nombre y vea a quién le tocó.</p>
         <button type="submit" class="btn">Entrar</button>
     </form>
 

@@ -118,6 +118,10 @@
         th { font-size: 13px; color: #777; font-weight: 600; }
         td.centro, th.centro { text-align: center; }
 
+        .chico { padding: 5px 10px; font-size: 13px; }
+        .acciones-fila { white-space: nowrap; }
+        .acciones-fila form { display: inline-block; margin: 0 2px; vertical-align: middle; }
+
         .quitar {
             background: none;
             color: #c62828;
@@ -228,7 +232,7 @@
                 <th>Participante ({{ g.participantes | length }})</th>
                 <th class="centro">Wishlist</th>
                 {% if g.sorteado %}<th class="centro">Ya vio quién le tocó</th>{% endif %}
-                {% if not g.sorteado %}<th></th>{% endif %}
+                <th class="centro">Acciones</th>
             </tr>
             {% for p in g.participantes %}
             <tr>
@@ -236,15 +240,19 @@
                 <td class="centro">{{ icono('check', 24) if p.wishlist else icono('reloj', 24) }}</td>
                 {% if g.sorteado %}
                     <td class="centro">{{ icono('check', 24) if p.visto else icono('reloj', 24) }}</td>
-                {% else %}
-                    <td class="centro">
-                        <form method="POST" style="margin:0;"
-                              action="{{ url_for('admin_eliminar_participante', codigo=g.codigo, clave=p.clave) }}"
-                              data-confirmar="¿Quitar a {{ p.nombre }} del grupo?">
-                            <button type="submit" class="quitar" title="Quitar del grupo" aria-label="Quitar del grupo">{{ icono('x', 18) }}</button>
-                        </form>
-                    </td>
                 {% endif %}
+                <td class="centro acciones-fila">
+                    <form method="POST" action="{{ url_for('admin_reiniciar_pin', codigo=g.codigo, clave=p.clave) }}"
+                          data-confirmar="¿Reiniciar el PIN de {{ p.nombre }}? Podrá elegir uno nuevo al entrar.">
+                        <button type="submit" class="gris chico" title="Si olvidó su PIN">Reiniciar PIN</button>
+                    </form>
+                    {% if not g.sorteado %}
+                    <form method="POST" action="{{ url_for('admin_eliminar_participante', codigo=g.codigo, clave=p.clave) }}"
+                          data-confirmar="¿Quitar a {{ p.nombre }} del grupo?">
+                        <button type="submit" class="quitar" title="Quitar del grupo" aria-label="Quitar del grupo">{{ icono('x', 18) }}</button>
+                    </form>
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
         </table>

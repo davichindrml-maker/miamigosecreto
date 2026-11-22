@@ -279,6 +279,54 @@ details.lista {
 
 details.lista summary { cursor: pointer; }
 
+/* ---- encuesta de ideas ---- */
+.grupo-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin: 6px 0 16px;
+}
+
+.sel { position: relative; }
+.sel input { position: absolute; opacity: 0; pointer-events: none; }
+
+.sel span {
+    display: inline-block;
+    padding: 9px 14px;
+    border-radius: 999px;
+    background: #f1f3f9;
+    border: 2px solid transparent;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.sel span:hover { transform: translateY(-1px); }
+.sel input:checked + span { background: #e8f7ee; border-color: var(--verde); color: var(--verde-osc); font-weight: bold; }
+.sel input:focus-visible + span { outline: 3px solid #93c5fd; }
+
+h3.pregunta { margin: 20px 0 4px; color: var(--texto); font-size: 17px; }
+
+.idea {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+    background: #f7f8fc;
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin: 8px 0;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.idea:has(input:checked) { border-color: var(--verde); background: #eef9f2; }
+.idea .emo { font-size: 30px; }
+.idea .txt { flex: 1; font-size: 16px; }
+.idea .txt small { display: block; color: #777; margin-top: 2px; }
+.idea input { width: 22px; height: 22px; accent-color: var(--verde); }
+
 /* ---- manual ---- */
 .pasos { list-style: none; counter-reset: paso; padding: 0; margin: 18px 0; text-align: left; }
 

@@ -15,6 +15,8 @@ from datetime import date, datetime, timedelta, timezone
 import firebase_admin
 from firebase_admin import credentials, db
 
+import ideas
+
 app = Flask(__name__)
 # El repo es público: en Render define SECRET_KEY como variable de entorno.
 app.secret_key = os.environ.get("SECRET_KEY", "intercambio_ultra_secreto_2025")
@@ -404,6 +406,12 @@ def wishlist(codigo, clave, grupo):
     while len(lista_actual) < 3:
         lista_actual.append("")
 
+    # Ideas que la persona eligió en "¿No sabes qué pedir?": solo llenan huecos
+    sugeridas = session.pop("sugerencias", [])
+    huecos = [i for i, v in enumerate(lista_actual) if not v.strip()]
+    for i, idea in zip(huecos, sugeridas):
+        lista_actual[i] = idea
+
     return render_template(
         "wishlist.html",
         nombre=nombre_de(grupo, clave),
@@ -411,6 +419,56 @@ def wishlist(codigo, clave, grupo):
         nota=obtener_nota(codigo, clave),
         **contexto_grupo(grupo),
     )
+
+
+# ======================
+#  RUTA: ¿NO SABES QUÉ PEDIR? (encuesta + ideas dentro del presupuesto)
+# ======================
+@app.route("/ideas", methods=["GET", "POST"])
+@requiere_usuario
+def ideas_regalo(codigo, clave, grupo):
+    ctx = contexto_grupo(grupo)
+    elegido = {
+        "intereses": request.form.getlist("intereses"),
+        "necesidades": request.form.getlist("necesidades"),
+        "estilos": request.form.getlist("estilos"),
+    }
+
+    if request.method == "POST":
+        variante = _entero(request.form.get("variante"), 0)
+        resultados = ideas.recomendar(
+            elegido["intereses"], elegido["necesidades"], elegido["estilos"],
+            ctx["pmin"], ctx["pmax"], semilla=f"{clave}-{variante}",
+        )
+        return render_template(
+            "ideas.html", resultados=resultados, elegido=elegido,
+            variante=variante + 1, **ctx, **_opciones_encuesta(),
+        )
+
+    return render_template(
+        "ideas.html", resultados=None, elegido=elegido, variante=0,
+        **ctx, **_opciones_encuesta(),
+    )
+
+
+def _opciones_encuesta():
+    return {
+        "lista_intereses": ideas.INTERESES,
+        "lista_necesidades": ideas.NECESIDADES,
+        "lista_estilos": ideas.ESTILOS,
+    }
+
+
+@app.route("/ideas/usar", methods=["POST"])
+@requiere_usuario
+def ideas_usar(codigo, clave, grupo):
+    elegidas = []
+    for valor in request.form.getlist("idea"):
+        idea = ideas.POR_ID.get(_entero(valor, -1))
+        if idea and idea["nombre"] not in elegidas:
+            elegidas.append(idea["nombre"])
+    session["sugerencias"] = elegidas[:3]
+    return redirect(url_for("wishlist"))
 
 
 # ======================

@@ -1,8 +1,8 @@
 {% extends "base.html" %}
-{% block titulo %}¿No sabes qué pedir? 💡{% endblock %}
+{% block titulo %}¿No sabes qué pedir?{% endblock %}
 {% block contenido %}
 <div class="tarjeta">
-    <div class="emoji-grande">💡</div>
+    <div class="ilustra">{{ icono('foco', 80) }}</div>
     <h2>¿No sabes qué pedir?</h2>
     <p style="margin:0;">Contesta rápido y te doy ideas.</p>
 
@@ -15,13 +15,13 @@
             <form method="POST" action="{{ url_for('ideas_usar') }}" id="form-ideas">
                 {% for r in resultados %}
                 <label class="idea">
-                    <span class="emo">{{ r.emoji }}</span>
+                    {{ icono(r.cat, 46) }}
                     <span class="txt">{{ r.nombre }}<small>aprox. ${{ [r.min, pmin] | max }} – ${{ [r.max, pmax] | min }}</small></span>
                     <input type="checkbox" name="idea" value="{{ r.id }}">
                 </label>
                 {% endfor %}
                 <p class="ayuda" id="contador">Elegidas: 0 de 5</p>
-                <button type="submit" class="btn verde">Pasar a mi wishlist 📝</button>
+                <button type="submit" class="btn verde">Pasar a mi wishlist</button>
             </form>
 
             <form method="POST" action="{{ url_for('ideas_regalo') }}">
@@ -29,11 +29,11 @@
                 {% for k in elegido.necesidades %}<input type="hidden" name="necesidades" value="{{ k }}">{% endfor %}
                 {% for k in elegido.estilos %}<input type="hidden" name="estilos" value="{{ k }}">{% endfor %}
                 <input type="hidden" name="variante" value="{{ variante }}">
-                <button type="submit" class="btn azul">🔄 Ver otras ideas</button>
+                <button type="submit" class="btn azul">Ver otras ideas</button>
             </form>
             <p class="ayuda">Los precios son aproximados. Revisa tiendas para encontrar el mejor.</p>
         {% else %}
-            <p>No encontré ideas en ese rango de presupuesto. Escribe tú lo que quieras en tu wishlist 😉</p>
+            <p>No encontré ideas en ese rango de presupuesto. Escribe tú lo que quieras en tu wishlist.</p>
         {% endif %}
         <a class="btn gris" href="{{ url_for('ideas_regalo') }}">Empezar de nuevo</a>
         <a class="btn gris" href="{{ url_for('wishlist') }}">Volver a mi wishlist</a>
@@ -42,7 +42,7 @@
             <h3 class="pregunta">1. ¿Qué te gusta? <small>(elige los que quieras)</small></h3>
             <div class="grupo-chips">
                 {% for k, etiqueta in lista_intereses.items() %}
-                    <label class="sel"><input type="checkbox" name="intereses" value="{{ k }}"><span>{{ etiqueta }}</span></label>
+                    <label class="sel"><input type="checkbox" name="intereses" value="{{ k }}"><span>{{ icono(k, 24) }}{{ etiqueta }}</span></label>
                 {% endfor %}
             </div>
 
@@ -60,7 +60,7 @@
                 {% endfor %}
             </div>
 
-            <button type="submit" class="btn verde">Dame ideas ✨</button>
+            <button type="submit" class="btn verde">Dame ideas</button>
         </form>
         <a class="btn gris" href="{{ url_for('wishlist') }}">Volver a mi wishlist</a>
     {% endif %}

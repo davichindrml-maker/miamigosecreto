@@ -1,18 +1,18 @@
 {% extends "base.html" %}
-{% block titulo %}Tu amigo secreto 🎁{% endblock %}
+{% block titulo %}Tu amigo secreto{% endblock %}
 {% block atributos_body %}data-confeti{% endblock %}
 {% block contenido %}
 <div class="tarjeta">
-    <div class="emoji-grande">🎁</div>
+    <div class="ilustra">{{ icono('regalo', 92) }}</div>
     <h2>{{ nombre }}, tu amigo secreto es:</h2>
-    <div class="revelado">🎉 {{ asignado }} 🎉</div>
-    <p><b>¡Shhh!</b> No se lo digas a nadie 🤫</p>
+    <div class="revelado">{{ asignado }}</div>
+    <p class="secreto">{{ icono('candado', 26) }} Shhh. No se lo digas a nadie.</p>
 
     {% include "_chips.html" %}
-    <p style="font-size:14px;color:#666;">Recuerda: el regalo va de ${{ pmin }} a ${{ pmax }} pesos.</p>
+    <p style="font-size:14px;color:#5b4a3e;">Recuerda: el regalo va de ${{ pmin }} a ${{ pmax }} pesos.</p>
 
-    <a class="btn azul" href="{{ url_for('ver_wishlist') }}">📜 Ver su wishlist</a>
+    <a class="btn azul" href="{{ url_for('ver_wishlist') }}">{{ icono('lista', 28) }} Ver su wishlist</a>
     <a class="btn gris" href="{{ url_for('opciones') }}">Volver a opciones</a>
-    <button type="button" class="btn gris" onclick="lanzarConfeti()">🎊 Más confeti</button>
+    <button type="button" class="btn gris" onclick="lanzarConfeti()">Más confeti</button>
 </div>
 {% endblock %}

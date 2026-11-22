@@ -1,19 +1,19 @@
 {% extends "base.html" %}
-{% block titulo %}Mini manual 📖{% endblock %}
+{% block titulo %}Mini manual{% endblock %}
 {% block clase_contenedor %}ancho{% endblock %}
 {% block contenido %}
 <div class="tarjeta">
-    <div class="emoji-grande">📖</div>
+    <div class="ilustra">{{ icono('libro', 84) }}</div>
     <h1>Mini manual del amigo secreto</h1>
-    <p>Es muy fácil. Solo sigue estos pasos 👇</p>
+    <p>Es muy fácil. Solo sigue estos pasos.</p>
 
     <ol class="pasos">
         <li><b>Recibe tu código.</b> El organizador te manda un enlace o un código de 6 letras y números (por WhatsApp, por ejemplo).</li>
         <li><b>Entra a la página.</b> Si usas el enlace, el código ya viene puesto. Si no, pégalo en la casilla de código. Luego escribe <b>tu nombre</b> y toca <b>Entrar</b>.</li>
-        <li><b>Escribe tus deseos.</b> Pon al menos 3 ideas de regalo (puedes agregar más con el botón ➕). Si quieres, agrega tu talla, color o un link en el campo de abajo. <b>Cuida el presupuesto:</b> normalmente va de ${{ pmin }} a ${{ pmax }} pesos. Lo verás en la parte de arriba de la página. <b>¿No sabes qué pedir?</b> Toca <b>💡 ¿No sabes qué pedir?</b>, contesta 3 preguntas rápidas y te sugiero ideas dentro del presupuesto.</li>
+        <li><b>Escribe tus deseos.</b> Pon al menos 3 ideas de regalo (puedes agregar más con el botón <b>+</b>). Si quieres, agrega tu talla, color o un link. <b>Cuida el presupuesto:</b> normalmente va de ${{ pmin }} a ${{ pmax }} pesos y lo verás arriba de la página. <b>¿No sabes qué pedir?</b> Toca ese botón, contesta 3 preguntas rápidas y te sugiero ideas dentro del presupuesto.</li>
         <li><b>Espera el sorteo.</b> El organizador lo hace cuando ya estén todos registrados. Después de eso ya no se pueden unir más personas.</li>
-        <li><b>Descubre a quién le regalas.</b> Entra y toca <b>🎁 ¿Quién me tocó?</b>. Saldrá confeti y tu amigo secreto. <b>No se lo digas a nadie 🤫</b></li>
-        <li><b>Mira su wishlist.</b> Toca <b>📜 Ver wishlist de mi amigo</b> para ver qué le gustaría recibir. Compra el regalo y llévalo el día del intercambio.</li>
+        <li><b>Descubre a quién le regalas.</b> Entra y toca <b>¿Quién me tocó?</b>. Saldrá confeti y tu amigo secreto. No se lo digas a nadie.</li>
+        <li><b>Mira su wishlist.</b> Toca <b>Wishlist de mi amigo</b> para ver qué le gustaría recibir. Compra el regalo y llévalo el día del intercambio.</li>
     </ol>
 
     <h2>Preguntas rápidas</h2>
@@ -21,7 +21,7 @@
         <details><summary>Se me olvidó si ya me registré</summary>
             <p>Vuelve a entrar con el mismo código y tu nombre. Si ya estabas, entras a tu cuenta. Los acentos y las mayúsculas no importan.</p></details>
         <details><summary>¿Puedo cambiar mis deseos?</summary>
-            <p>Sí. En el menú toca <b>📝 Editar mi wishlist</b> las veces que quieras.</p></details>
+            <p>Sí. En el menú toca <b>Editar mi wishlist</b> las veces que quieras.</p></details>
         <details><summary>¿Alguien más puede ver a quién me tocó?</summary>
             <p>No. Solo tú lo ves. Ni el organizador sabe quién le tocó a quién.</p></details>
         <details><summary>¿Me puede tocar yo mismo?</summary>
@@ -34,6 +34,6 @@
             <p>Revisa que el código esté completo. Lo más fácil es pegarlo directo desde el mensaje o usar el enlace que te mandaron.</p></details>
     </div>
 
-    <a class="btn verde" href="{{ url_for('login') }}">Ir a entrar 🎅</a>
+    <a class="btn verde" href="{{ url_for('login') }}">Ir a entrar</a>
 </div>
 {% endblock %}

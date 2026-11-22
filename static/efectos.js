@@ -31,7 +31,7 @@
 
         (function dibujar() {
             ctx.clearRect(0, 0, ancho, alto);
-            ctx.fillStyle = 'rgba(255,255,255,0.85)';
+            ctx.fillStyle = 'rgba(251,243,223,0.85)';
             for (var i = 0; i < copos.length; i++) {
                 var c = copos[i];
                 c.y += c.v;
@@ -55,7 +55,7 @@
         var c = cv.getContext('2d');
         var w = cv.width = window.innerWidth;
         var h = cv.height = window.innerHeight;
-        var colores = ['#ff5252', '#ffd54f', '#4cd964', '#5ac8fa', '#ff80ab', '#ffffff'];
+        var colores = ['#c8372d', '#e9b44c', '#2d6a4f', '#3a6ea5', '#fbf3df', '#e58f8f'];
         var piezas = [];
         for (var i = 0; i < 160; i++) {
             piezas.push({

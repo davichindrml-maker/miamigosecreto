@@ -16,11 +16,13 @@ import firebase_admin
 from firebase_admin import credentials, db
 
 import ideas
+from iconos import icono
 
 app = Flask(__name__)
 # El repo es público: en Render define SECRET_KEY como variable de entorno.
 app.secret_key = os.environ.get("SECRET_KEY", "intercambio_ultra_secreto_2025")
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.jinja_env.globals["icono"] = icono
 # Render pone la app detrás de un proxy; así los enlaces salen con https.
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
@@ -176,7 +178,7 @@ def info_fecha(grupo):
     elif dias == 1:
         mensaje = "¡Es mañana!"
     elif dias == 0:
-        mensaje = "¡Es hoy! 🎉"
+        mensaje = "¡Es hoy!"
     else:
         mensaje = "El intercambio ya pasó"
     return {"texto": texto, "dias": dias, "mensaje": mensaje}
@@ -235,14 +237,14 @@ def entrar_o_registrar(codigo: str, nombre: str) -> str:
 
     grupo = obtener_grupo(codigo)
     if grupo is None:
-        raise ErrorGrupo("❌ Ese código no existe. Revísalo e intenta de nuevo.")
+        raise ErrorGrupo("Ese código no existe. Revísalo e intenta de nuevo.")
     if clave in participantes_de(grupo):
         return clave
 
     def _registrar(actual):
         # Transacción: evita registrar a alguien justo cuando se hace el sorteo
         if not isinstance(actual, dict):
-            raise ErrorGrupo("❌ Ese código no existe. Revísalo e intenta de nuevo.")
+            raise ErrorGrupo("Ese código no existe. Revísalo e intenta de nuevo.")
         if clave in participantes_de(actual):
             return actual
         if actual.get("estado") != "abierto":
@@ -515,7 +517,7 @@ def opciones(codigo, clave, grupo):
 def asignar(codigo, clave, grupo):
     if grupo.get("estado") != "sorteado":
         return mensaje(
-            f"🎄 El sorteo de «{grupo.get('nombre', 'tu grupo')}» todavía no se hace. "
+            f"El sorteo de «{grupo.get('nombre', 'tu grupo')}» todavía no se hace. "
             "Cuando todos se hayan registrado, el organizador lo hará y aquí "
             "podrás ver quién te tocó."
         )
@@ -523,7 +525,7 @@ def asignar(codigo, clave, grupo):
     asignado = _subdict(grupo, "asignaciones").get(clave)
     if not asignado:
         return mensaje(
-            "⚠️ Te uniste después del sorteo, así que no tienes amigo secreto. "
+            "Te uniste después del sorteo, así que no tienes amigo secreto. "
             "Pídele al organizador que repita el sorteo."
         )
 
@@ -684,9 +686,9 @@ def admin_nuevo_grupo():
     nombre = limpiar_nombre(request.form.get("nombre")) or "Intercambio"
     try:
         codigo = crear_grupo(nombre)
-        flash(f"✅ Grupo «{nombre}» creado. Código: {codigo}")
+        flash(f"Grupo «{nombre}» creado. Código: {codigo}")
     except ErrorGrupo as e:
-        flash(f"❌ {e}")
+        flash(f"{e}")
     return redirect(url_for("admin"))
 
 
@@ -700,9 +702,9 @@ def admin_config(codigo):
             request.form.get("pmin"),
             request.form.get("pmax"),
         )
-        flash("💾 Fecha y presupuesto guardados.")
+        flash("Fecha y presupuesto guardados.")
     except ErrorGrupo as e:
-        flash(f"❌ {e}")
+        flash(f"{e}")
     return redirect(url_for("admin"))
 
 
@@ -711,9 +713,9 @@ def admin_config(codigo):
 def admin_sortear(codigo):
     try:
         sortear_grupo(codigo)
-        flash("🎲 ¡Sorteo hecho! Ya cada quien puede ver quién le tocó.")
+        flash("¡Sorteo hecho! Ya cada quien puede ver quién le tocó.")
     except ErrorGrupo as e:
-        flash(f"❌ {e}")
+        flash(f"{e}")
     return redirect(url_for("admin"))
 
 
@@ -722,7 +724,7 @@ def admin_sortear(codigo):
 def admin_reabrir(codigo):
     if obtener_grupo(codigo) is not None:
         reabrir_grupo(codigo)
-        flash("🔓 Sorteo borrado. El grupo vuelve a aceptar personas.")
+        flash("Sorteo borrado. El grupo vuelve a aceptar personas.")
     return redirect(url_for("admin"))
 
 
@@ -732,7 +734,7 @@ def admin_eliminar_grupo(codigo):
     grupo = obtener_grupo(codigo)
     if grupo is not None:
         ref_grupo(codigo).delete()
-        flash(f"🗑️ Grupo «{grupo.get('nombre', codigo)}» eliminado.")
+        flash(f"Grupo «{grupo.get('nombre', codigo)}» eliminado.")
     return redirect(url_for("admin"))
 
 
@@ -743,7 +745,7 @@ def admin_eliminar_participante(codigo, clave):
     if grupo is None or clave not in participantes_de(grupo):
         return redirect(url_for("admin"))
     if grupo.get("estado") == "sorteado":
-        flash("❌ No se puede quitar a nadie después del sorteo. Primero reabre el grupo.")
+        flash("No se puede quitar a nadie después del sorteo. Primero reabre el grupo.")
         return redirect(url_for("admin"))
     ref_grupo(codigo, "participantes", clave).delete()
     ref_grupo(codigo, "wishlists", clave).delete()

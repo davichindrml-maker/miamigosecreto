@@ -68,6 +68,8 @@ LARGO_MAX_NOMBRE = 40
 LARGO_MAX_NOTA = 200
 MAX_DESEOS = 10
 MIN_DESEOS = 3
+MAX_FALLOS_PIN = 5          # intentos fallidos antes de bloquear
+BLOQUEO_PIN_SEG = 10 * 60   # minutos de bloqueo tras demasiados fallos
 PRESUPUESTO_MIN_DEFECTO = 200
 PRESUPUESTO_MAX_DEFECTO = 500
 
@@ -225,7 +227,22 @@ def crear_grupo(nombre: str) -> str:
     raise ErrorGrupo("No se pudo generar un código. Intenta de nuevo.")
 
 
-def entrar_o_registrar(codigo: str, nombre: str) -> str:
+def _hash_pin(pin: str, sal: str) -> str:
+    return hashlib.pbkdf2_hmac("sha256", pin.encode(), sal.encode(), 100_000).hex()
+
+
+def _datos_pin(pin: str) -> dict:
+    sal = secrets.token_hex(8)
+    return {"pin_sal": sal, "pin_hash": _hash_pin(pin, sal)}
+
+
+def _pin_correcto(persona: dict, pin: str) -> bool:
+    return hmac.compare_digest(
+        _hash_pin(pin, persona.get("pin_sal", "")), persona.get("pin_hash", "")
+    )
+
+
+def entrar_o_registrar(codigo: str, nombre: str, pin: str = "") -> str:
     """Devuelve la clave del participante.
 
     Si el nombre ya está en el grupo, solo entra. Si es nuevo y el grupo
@@ -234,11 +251,16 @@ def entrar_o_registrar(codigo: str, nombre: str) -> str:
     clave = clave_de_nombre(nombre)
     if not clave:
         raise ErrorGrupo("Escribe un nombre que tenga letras o números.")
+    if not re.fullmatch(r"\d{4}", pin or ""):
+        raise ErrorGrupo("Escribe un PIN de 4 números. Invéntalo tú: lo usarás para volver a entrar.")
 
     grupo = obtener_grupo(codigo)
     if grupo is None:
         raise ErrorGrupo("Ese código no existe. Revísalo e intenta de nuevo.")
-    if clave in participantes_de(grupo):
+
+    persona = participantes_de(grupo).get(clave)
+    if isinstance(persona, dict):
+        _verificar_pin(codigo, clave, persona, pin)
         return clave
 
     def _registrar(actual):
@@ -259,11 +281,47 @@ def entrar_o_registrar(codigo: str, nombre: str) -> str:
         actual["participantes"][clave] = {
             "nombre": nombre,
             "registrado": int(time.time()),
+            **_datos_pin(pin),
         }
         return actual
 
     ref_grupo(codigo).transaction(_registrar)
     return clave
+
+
+def _verificar_pin(codigo: str, clave: str, persona: dict, pin: str):
+    """Deja pasar solo con el PIN correcto; bloquea tras varios fallos."""
+    ahora = int(time.time())
+    bloqueo = _entero(persona.get("bloqueo"), 0)
+    if bloqueo > ahora:
+        minutos = (bloqueo - ahora) // 60 + 1
+        raise ErrorGrupo(
+            f"Demasiados intentos con ese nombre. Espera {minutos} min e intenta de nuevo."
+        )
+
+    ref = ref_grupo(codigo, "participantes", clave)
+    if not persona.get("pin_hash"):
+        # Persona registrada antes de que existieran los PIN: elige el suyo ahora
+        ref.update(_datos_pin(pin))
+        return
+
+    if _pin_correcto(persona, pin):
+        if persona.get("fallos"):
+            ref.update({"fallos": None, "bloqueo": None})
+        return
+
+    fallos = _entero(persona.get("fallos"), 0) + 1
+    if fallos >= MAX_FALLOS_PIN:
+        ref.update({"fallos": None, "bloqueo": ahora + BLOQUEO_PIN_SEG})
+        raise ErrorGrupo(
+            "PIN incorrecto demasiadas veces. Por seguridad ese nombre queda "
+            f"bloqueado {BLOQUEO_PIN_SEG // 60} minutos."
+        )
+    ref.update({"fallos": fallos})
+    raise ErrorGrupo(
+        "Ese nombre ya está registrado con otro PIN. Si eres tú, revisa tu PIN "
+        f"(te quedan {MAX_FALLOS_PIN - fallos} intentos). Si no, usa otro nombre."
+    )
 
 
 def obtener_wishlist(codigo: str, clave: str):
@@ -373,7 +431,7 @@ def login():
         try:
             if not codigo:
                 raise ErrorGrupo("Escribe el código del grupo.")
-            clave = entrar_o_registrar(codigo, nombre)
+            clave = entrar_o_registrar(codigo, nombre, request.form.get("pin", "").strip())
         except ErrorGrupo as e:
             return render_template("login.html", error=str(e), codigo=codigo, nombre=nombre)
 
@@ -641,7 +699,7 @@ def _vista_grupo(codigo, grupo):
         f"🎁 ¡Únete al intercambio «{nombre}»!\n"
         f"1) Entra a {enlace}\n"
         f"2) Código del grupo: {codigo} (ya viene en el enlace)\n"
-        f"3) Escribe tu nombre y pon 3 deseos\n"
+        f"3) Escribe tu nombre, inventa un PIN de 4 números y pon tus deseos\n"
         f"💰 Presupuesto: de ${pmin} a ${pmax} pesos\n"
         + (f"📅 Fecha del intercambio: {fecha['texto']}\n" if fecha else "")
         + f"❓ ¿Dudas? Lee el mini manual: {manual_url}"
@@ -751,6 +809,23 @@ def admin_eliminar_participante(codigo, clave):
     ref_grupo(codigo, "wishlists", clave).delete()
     ref_grupo(codigo, "notas", clave).delete()
     flash(f"Se quitó a {nombre_de(grupo, clave)} del grupo «{grupo.get('nombre', '')}».")
+    return redirect(url_for("admin"))
+
+
+@app.route("/admin/grupos/<codigo>/participantes/<clave>/pin", methods=["POST"])
+@requiere_admin
+def admin_reiniciar_pin(codigo, clave):
+    grupo = obtener_grupo(codigo)
+    if grupo is None or clave not in participantes_de(grupo):
+        return redirect(url_for("admin"))
+    ref_grupo(codigo, "participantes", clave).update(
+        {"pin_hash": None, "pin_sal": None, "fallos": None, "bloqueo": None}
+    )
+    flash(
+        f"PIN de {nombre_de(grupo, clave)} reiniciado. La próxima vez que entre "
+        "con su nombre podrá elegir uno nuevo. Hazlo cuando esa persona esté lista "
+        "para entrar, para que nadie más se le adelante."
+    )
     return redirect(url_for("admin"))
 
 

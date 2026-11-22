@@ -135,6 +135,29 @@
             align-items: center;
         }
 
+        .config {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            margin-top: 16px;
+            padding: 12px;
+            background: #f4f6fb;
+            border-radius: 10px;
+        }
+
+        .config label { font-size: 13px; color: #555; display: flex; flex-direction: column; gap: 4px; }
+
+        .config input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+            width: 130px;
+        }
+
+        .config input[type=number] { width: 90px; }
+
         .acciones form { margin: 0; }
         .nota { font-size: 13px; color: #777; }
     </style>
@@ -184,6 +207,20 @@
             <a class="boton verde-wa" target="_blank" rel="noopener"
                href="https://wa.me/?text={{ g.invitacion | urlencode }}">WhatsApp</a>
         </div>
+
+        <form class="config" method="POST" action="{{ url_for('admin_config', codigo=g.codigo) }}">
+            <label>📅 Fecha del intercambio
+                <input type="date" name="fecha" value="{{ g.fecha_iso }}">
+            </label>
+            <label>💰 Mínimo $
+                <input type="number" name="pmin" value="{{ g.pmin }}" min="0" max="100000" step="10" required>
+            </label>
+            <label>Máximo $
+                <input type="number" name="pmax" value="{{ g.pmax }}" min="0" max="100000" step="10" required>
+            </label>
+            <button type="submit" class="azul">Guardar</button>
+        </form>
+        {% if g.fecha %}<p class="nota">📅 {{ g.fecha.texto }} · {{ g.fecha.mensaje }}</p>{% endif %}
 
         {% if g.participantes %}
         <table>

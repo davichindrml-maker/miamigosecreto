@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Mensaje</title>
-</head>
-<body style="font-family: Arial; text-align: center; margin-top: 80px;">
-    <p>{{ mensaje }}</p>
-    <a href="{{ url_for('opciones') }}">Volver a opciones</a>
-</body>
-</html>
+{% extends "base.html" %}
+{% block titulo %}Mensaje 🎄{% endblock %}
+{% block contenido %}
+<div class="tarjeta">
+    <div class="emoji-grande">🎄</div>
+    <p style="font-size:18px;">{{ mensaje }}</p>
+    <a class="btn verde" href="{{ url_for('opciones') }}">Volver a opciones</a>
+</div>
+{% endblock %}

@@ -34,8 +34,8 @@
 <body>
 
     <div class="card">
-        <h2>{{ nombre | capitalize }}, tu amigo secreto es:</h2>
-        <h1 style="color:green;">🎁 {{ asignado | capitalize }} 🎁</h1>
+        <h2>{{ nombre }}, tu amigo secreto es:</h2>
+        <h1 style="color:green;">🎁 {{ asignado }} 🎁</h1>
 
         <p>Puedes ver lo que le gustaría recibir:</p>
         <a href="{{ url_for('ver_wishlist') }}" class="btn">Ver su wishlist</a>

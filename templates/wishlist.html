@@ -73,14 +73,15 @@
 
         .back {
             display: block;
-            margin-top:
-</style>
+            margin-top: 15px;
+        }
+    </style>
 </head>
 <body>
 
     <div class="card">
-        <h2>Hola {{ nombre | capitalize }} 👋</h2>
-        <p>Edita o escribe tus 3 deseos de regalo:</p>
+        <h2>Hola {{ nombre }} 👋</h2>
+        <p>Grupo: <b>{{ grupo_nombre }}</b><br>Edita o escribe tus 3 deseos de regalo:</p>
 
         <form method="POST">
             <input type="text" name="item1" value="{{ lista[0] }}" placeholder="Regalo 1" required><br>
@@ -90,7 +91,7 @@
         </form>
 
         <br>
-        <a href="{{ url_for('opciones') }}">Volver</a>
+        <a class="back" href="{{ url_for('opciones') }}">Volver</a>
     </div>
 
 </body>

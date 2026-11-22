@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Organizador 🎄</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1b5e20, #b71c1c);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.95);
+            padding: 40px;
+            border-radius: 15px;
+            width: 320px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        }
+
+        input[type="password"] {
+            width: 90%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #2e7d32;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 17px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover { background-color: #1b5e20; }
+
+        .error { color: #b71c1c; font-weight: bold; margin-top: 15px; }
+        .aviso { color: #555; font-size: 14px; text-align: left; }
+        code { background: #eee; padding: 2px 5px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>🎅 Panel del organizador</h2>
+
+        {% if sin_configurar %}
+            <p class="aviso">
+                Falta configurar la contraseña del organizador.<br><br>
+                En Render ve a <b>Environment</b> y agrega la variable
+                <code>ADMIN_PASSWORD</code> con la contraseña que quieras.
+                Después vuelve a esta página.
+            </p>
+        {% else %}
+            <form method="POST">
+                <input type="password" name="password" placeholder="Contraseña" required autofocus>
+                <button type="submit">Entrar</button>
+            </form>
+            {% if error %}
+                <p class="error">{{ error }}</p>
+            {% endif %}
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -55,6 +55,25 @@
             background-color: #c2185b;
         }
 
+        input.codigo {
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        input.codigo::placeholder {
+            letter-spacing: normal;
+            font-weight: normal;
+            text-transform: none;
+        }
+
+        .ayuda {
+            font-size: 13px;
+            color: #555;
+            margin-top: 15px;
+        }
+
         .error {
             color: #b71c1c;
             font-weight: bold;
@@ -66,12 +85,18 @@
 <body>
     <div class="card">
         <h2>🎄 Intercambio Navideño 🎁</h2>
-        <p>Ingresa tu nombre para continuar</p>
+        <p>Pega el código de tu grupo y escribe tu nombre</p>
 
         <form method="POST">
-            <input type="text" name="usuario" placeholder="Tu nombre..." required>
+            <input type="text" name="codigo" class="codigo" placeholder="Código del grupo"
+                   value="{{ codigo or '' }}" maxlength="12" autocomplete="off"
+                   autocapitalize="characters" spellcheck="false" required>
+            <input type="text" name="usuario" placeholder="Tu nombre..."
+                   value="{{ nombre or '' }}" maxlength="40" required>
             <button type="submit">Entrar 🎅</button>
         </form>
+
+        <p class="ayuda">¿Ya te habías registrado? Escribe tu nombre igual que la primera vez.</p>
 
         {% if error %}
             <p class="error">{{ error }}</p>
